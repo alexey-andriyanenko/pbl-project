@@ -1,16 +1,25 @@
 import { BrowserRouter } from "react-router";
 
-import { AppRoutes } from "src/routes";
+import { AppRoutes, IRoute } from "src/routes";
 
 import authModule from "src/auth-module";
 import coreModule from "src/core-module";
+import { NotFoundRoute } from "./routes/not-found-route";
+
+const appRoutes: IRoute[] = [
+  ...authModule.routes,
+  ...coreModule.routes,
+  {
+    path: "*",
+    element: <NotFoundRoute />,
+  },
+];
 
 function App() {
   return (
     <>
       <BrowserRouter>
-        <AppRoutes {...authModule} />
-        <AppRoutes {...coreModule} />
+        <AppRoutes routes={appRoutes} />
       </BrowserRouter>
     </>
   );

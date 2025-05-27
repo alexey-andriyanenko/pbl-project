@@ -1,9 +1,12 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { authApiService, ILoginRequest } from "../api";
+import { ILoginRequest } from "../api";
+import { UserModel } from "../models";
 
 class AuthStore {
   private _isLogged: boolean | null = null;
+
+  private _user: UserModel | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -13,12 +16,26 @@ class AuthStore {
     return this._isLogged;
   }
 
-  async login(data: ILoginRequest): Promise<void> {
-    await authApiService.login(data);
+  public get User(): UserModel | null {
+    return this._user;
+  }
 
-    runInAction(() => {
-      this._isLogged = true;
-    });
+  async signIn(data: ILoginRequest): Promise<void> {
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+
+    if (data.email === "admin@example.com" && data.password === "root") {
+      runInAction(() => {
+        this._isLogged = true;
+        this._user = {
+          id: 1,
+          firstName: "Admin",
+          lastName: "User",
+          email: "admin@example.com",
+        };
+      });
+    } else {
+      throw new Error("Invalid email or password");
+    }
   }
 }
 
