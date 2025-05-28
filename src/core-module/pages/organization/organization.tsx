@@ -6,7 +6,7 @@ import { OrganizationSidebar } from "./organization-sidebar";
 
 const Organization: React.FC = () => {
   return (
-    <Flex flex="1" direction="row" width="100%">
+    <Flex flex="1" direction="row" width="100%" height="100%">
       <OrganizationSidebar />
 
       <Flex direction="column" width="100%" p={4}>

@@ -17,12 +17,4 @@ export const USERS_LIST_COLUMNS: UserColumn[] = [
     key: "role",
     label: "Role",
   },
-  {
-    key: "status",
-    label: "Status",
-  },
-  {
-    key: "actions",
-    label: "Actions",
-  },
 ];

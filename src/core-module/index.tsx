@@ -1,6 +1,7 @@
 import Organization from "src/core-module/pages/organization";
 import OrganizationUsers from "src/core-module/pages/organization-users";
 import OrganizationSettings from "src/core-module/pages/organization-settings";
+import OrganizationProjects from "src/core-module/pages/organization-projects";
 import Project from "src/core-module/pages/project";
 import { IRoute } from "src/routes";
 
@@ -25,6 +26,11 @@ const routes: IRoute[] = [
   {
     path: CoreRoutes.organization.settings,
     element: <OrganizationSettings />,
+    isPrivate: true,
+  },
+  {
+    path: CoreRoutes.organization.projects,
+    element: <OrganizationProjects />,
     isPrivate: true,
   },
   {
