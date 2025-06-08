@@ -14,20 +14,12 @@ type BoardColumnProps = {
   onDeleteTask: (task: TaskModel) => void;
 };
 
-const generateId = () => Math.random().toString(36).substr(2, 9);
-
 export const BoardColumn: React.FC<BoardColumnProps> = observer(
   ({ status, tasks, onCreateTask, onEditTask, onDeleteTask }) => {
-    const id = React.useMemo(() => `board-column-${status}-${generateId()}`, [status]);
-    const { setNodeRef } = useDroppable({
-      id,
-    });
     const handleCreateTask = () => onCreateTask?.(status);
 
     return (
       <Stack
-        ref={setNodeRef}
-        id={id}
         width="300px"
         minWidth="300px"
         height="100%"
