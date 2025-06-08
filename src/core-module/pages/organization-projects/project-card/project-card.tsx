@@ -1,34 +1,44 @@
 import React from "react";
 
 import { Card, Avatar, Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 
-import { ProjectRoutes } from "src/core-module/routes.ts";
 import { pickColor } from "src/shared-module/utils";
+import { ProjectModel } from "../../../models/project.ts";
 
-export const ProjectCard: React.FC = () => {
-  const navigate = useNavigate();
+type ProjectCardProps = {
+  project: ProjectModel;
+  onSelect: (project: ProjectModel) => void;
+  onEdit: (project: ProjectModel) => void;
+  onDelete: (project: ProjectModel) => void;
+};
 
-  const handleVisit = () => navigate(ProjectRoutes.home);
-  const handleSettings = () => navigate(ProjectRoutes.settings);
+export const ProjectCard: React.FC<ProjectCardProps> = ({
+  project,
+  onSelect,
+  onEdit,
+  onDelete,
+}) => {
+  const handleSelect = () => onSelect(project);
+  const handleEdit = () => onEdit(project);
+  const handleDelete = () => onDelete(project);
 
   return (
-    <Card.Root width="320px" height="275px" flex="1">
+    <Card.Root height="320px">
       <Card.Body gap="2">
-        <Avatar.Root size="lg" colorPalette={pickColor("Project Name")}>
-          <Avatar.Fallback name="Nue Camp" />
+        <Avatar.Root size="lg" colorPalette={pickColor(project.name)}>
+          <Avatar.Fallback name="Project Name" />
         </Avatar.Root>
-        <Card.Title mt="2">Project Name</Card.Title>
-        <Card.Description>
-          Project description goes here. This is a brief overview of the project, its goals, and
-          what it aims to achieve.
-        </Card.Description>
+        <Card.Title mt="2">{project.name}</Card.Title>
+        <Card.Description>{project.description}</Card.Description>
       </Card.Body>
       <Card.Footer justifyContent="flex-end">
-        <Button variant="outline" onClick={handleVisit}>
-          Visit
+        <Button colorPalette="red" onClick={handleDelete}>
+          Delete
         </Button>
-        <Button onClick={handleSettings}>Settings</Button>
+        <Button onClick={handleEdit}>Edit</Button>
+        <Button variant="outline" onClick={handleSelect}>
+          Enter
+        </Button>
       </Card.Footer>
     </Card.Root>
   );

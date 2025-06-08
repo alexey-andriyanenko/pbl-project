@@ -1,20 +1,43 @@
-import React, { useRef } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { Dialog, Button, Portal, Stack, Field, Input } from "@chakra-ui/react";
+import { Dialog, Button, Portal, Stack, Field, Input, Textarea } from "@chakra-ui/react";
+import { ProjectFormValues } from "./create-or-edit-project-dialog.types.ts";
+import { ProjectModel } from "../../models/project.ts";
+import { ModalProps } from "../../../modals-module";
 
-type CreateOrEditProjectDialogProps = {
-  isOpen: boolean;
-  onClose: () => void;
+export type CreateOrEditProjectDialogProps = ModalProps & {
+  onCreate?: (name: string, description: string) => Promise<void>;
+  onEdit?: (name: string, description: string) => Promise<void>;
+
+  project?: ProjectModel;
 };
 
 export const CreateOrEditProjectDialog: React.FC<CreateOrEditProjectDialogProps> = ({
+  project,
   isOpen,
   onClose,
+  onCreate,
+  onEdit,
 }) => {
-  const ref = useRef<HTMLInputElement>(null);
+  const { formState, register, handleSubmit } = useForm<ProjectFormValues>({
+    defaultValues: {
+      name: project?.name || "",
+      description: project?.description || "",
+    },
+  });
+
+  const onSubmit = handleSubmit(async (data) => {
+    if (project === null) {
+      await onCreate?.(data.name, data.description);
+    } else {
+      await onEdit?.(data.name, data.description);
+    }
+    onClose();
+  });
 
   return (
-    <Dialog.Root lazyMount placement="center" open={isOpen} initialFocusEl={() => ref.current}>
+    <Dialog.Root lazyMount placement="center" open={isOpen}>
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
@@ -24,9 +47,30 @@ export const CreateOrEditProjectDialog: React.FC<CreateOrEditProjectDialogProps>
             </Dialog.Header>
             <Dialog.Body pb="4">
               <Stack gap="4">
-                <Field.Root>
+                <Field.Root invalid={!!formState.errors.name}>
                   <Field.Label>Project Name</Field.Label>
-                  <Input ref={ref} placeholder="Enter project name..." />
+                  <Input
+                    {...register("name", {
+                      required: {
+                        value: true,
+                        message: "Name is required",
+                      },
+                    })}
+                  />
+                  <Field.ErrorText>{formState.errors.name?.message}</Field.ErrorText>
+                </Field.Root>
+
+                <Field.Root invalid={!!formState.errors.description}>
+                  <Field.Label>Project Description</Field.Label>
+                  <Textarea
+                    {...register("description", {
+                      maxLength: {
+                        value: 250,
+                        message: "Description cannot exceed 250 characters",
+                      },
+                    })}
+                  />
+                  <Field.ErrorText>{formState.errors.description?.message}</Field.ErrorText>
                 </Field.Root>
               </Stack>
             </Dialog.Body>
@@ -36,7 +80,9 @@ export const CreateOrEditProjectDialog: React.FC<CreateOrEditProjectDialogProps>
                   Cancel
                 </Button>
               </Dialog.ActionTrigger>
-              <Button onClick={onClose}>Save</Button>
+              <Button loading={formState.isSubmitting} onClick={onSubmit}>
+                Save
+              </Button>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Positioner>

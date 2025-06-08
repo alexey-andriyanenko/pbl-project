@@ -1,12 +1,14 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { ILoginRequest } from "../api";
+import { authApiService, ISignInRequest } from "../api";
 import { UserModel } from "../models";
+import { HttpClient } from "../../shared-module/api";
 
 class AuthStore {
-  private _isLogged: boolean | null = null;
+  private _isLogged: boolean | null = localStorage.getItem("token") !== null;
+  private _userId: number | null = null;
 
-  private _user: UserModel | null = null;
+  private _currentUser: UserModel | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -16,26 +18,34 @@ class AuthStore {
     return this._isLogged;
   }
 
-  public get User(): UserModel | null {
-    return this._user;
+  public get currentUser(): UserModel | null {
+    return this._currentUser;
   }
 
-  async signIn(data: ILoginRequest): Promise<void> {
-    await new Promise<void>((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+  public get userId(): number | null {
+    return this._userId;
+  }
 
-    if (data.email === "admin@example.com" && data.password === "root") {
-      runInAction(() => {
-        this._isLogged = true;
-        this._user = {
-          id: 1,
-          firstName: "Admin",
-          lastName: "User",
-          email: "admin@example.com",
-        };
-      });
-    } else {
-      throw new Error("Invalid email or password");
+  async signIn(data: ISignInRequest): Promise<void> {
+    const res = await authApiService.login(data);
+    localStorage.setItem("token", res.token);
+
+    runInAction(() => {
+      this._isLogged = true;
+      HttpClient.token = res.token;
+    });
+  }
+
+  async fetchMe() {
+    if (!this._isLogged) {
+      throw new Error("User is not logged in");
     }
+
+    const res = await authApiService.getMe();
+
+    runInAction(() => {
+      this._currentUser = res;
+    });
   }
 }
 

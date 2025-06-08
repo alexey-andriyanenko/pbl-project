@@ -1,17 +1,30 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { Table, Avatar, Menu, IconButton, Portal } from "@chakra-ui/react";
 import { HiDotsVertical } from "react-icons/hi";
 
-import { UserModel } from "src/auth-module/models";
+import { UserModel } from "src/core-module/models/user.ts";
 import { pickColor } from "src/shared-module/utils";
 
 import { USERS_LIST_COLUMNS } from "./users-list.constants.ts";
 
 type UsersListProps = {
   users: UserModel[];
+  onEdit: (user: UserModel) => void;
+  onDelete: (user: UserModel) => void;
 };
 
-export const UsersList: React.FC<UsersListProps> = ({ users }) => {
+export const UsersList: React.FC<UsersListProps> = observer(({ users, onEdit, onDelete }) => {
+  const handleMenu = (user: UserModel, value: string) => {
+    if (value === "edit") {
+      onEdit(user);
+    }
+
+    if (value === "delete") {
+      onDelete(user);
+    }
+  };
+
   return (
     <Table.Root>
       <Table.Header>
@@ -30,8 +43,8 @@ export const UsersList: React.FC<UsersListProps> = ({ users }) => {
         {users.map((user) => (
           <Table.Row key={user.id}>
             <Table.Cell>
-              <Avatar.Root colorPalette={pickColor(`${user.firstName} ${user.lastName}`)}>
-                <Avatar.Fallback name={`${user.firstName} ${user.lastName}`} />
+              <Avatar.Root colorPalette={pickColor(user.fullName)}>
+                <Avatar.Fallback name={user.fullName} />
               </Avatar.Root>
             </Table.Cell>
 
@@ -40,7 +53,7 @@ export const UsersList: React.FC<UsersListProps> = ({ users }) => {
             ))}
 
             <Table.Cell>
-              <Menu.Root>
+              <Menu.Root onSelect={({ value }) => handleMenu(user, value)}>
                 <Menu.Trigger asChild>
                   <IconButton variant="outline">
                     <HiDotsVertical />
@@ -61,4 +74,4 @@ export const UsersList: React.FC<UsersListProps> = ({ users }) => {
       </Table.Body>
     </Table.Root>
   );
-};
+});

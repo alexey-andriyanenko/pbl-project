@@ -1,7 +1,7 @@
-export interface IModalProps {
+export type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
-}
+};
 
 // TODO: more details about ModalsStoreRegistryGuard
 export type ModalsStoreRegistryGuard<ModalName extends string> = {

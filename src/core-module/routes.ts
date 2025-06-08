@@ -1,13 +1,17 @@
 export const OrganizationRoutes = {
-  home: "/organization-name",
-  projects: "/organization-name/projects",
-  users: "/organization-name/users",
-  settings: "/organization-name/settings",
+  select: "/organization-selection",
+  invalid: "/invalid-organization",
+  home: "/organization/:organizationName",
+  projects: "/organization/:organizationName/projects",
+  users: "/organization/:organizationName/users",
+  settings: "/organization/:organizationName/settings",
 };
 
 export const ProjectRoutes = {
-  home: "/organization-name/projects/project-name",
-  settings: "/organization-name/projects/project-name/settings",
-  workspace: "/organization-name/projects/project-name/workspace",
-  team: "/organization-name/projects/project-name/team",
+  invalid: "/organization/:organizationName/invalid-project",
+  home: "/organization/:organizationName/projects/:projectName",
+  settings: "/organization/:organizationName/projects/:projectName/settings",
+  boards: "/organization/:organizationName/projects/:projectName/boards",
+  boardDetails: "/organization/:organizationName/projects/:projectName/boards/:boardId",
+  team: "/organization/:organizationName/projects/:projectName/team",
 };

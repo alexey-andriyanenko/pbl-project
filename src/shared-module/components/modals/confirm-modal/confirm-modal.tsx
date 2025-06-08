@@ -1,44 +1,58 @@
 import React from "react";
 
-import { Dialog, Button } from "@chakra-ui/react";
+import { Dialog, Button, Portal, Text } from "@chakra-ui/react";
 
-import { IModalProps } from "src/modals-module";
+import { ModalProps } from "src/modals-module";
 
-export interface IConfirmModalProps extends IModalProps {
+export interface IConfirmModalProps extends ModalProps {
   title: string;
   onConfirm: () => void | Promise<unknown>;
+
+  description?: string;
 }
 
-export const ConfirmModal: React.FC<IConfirmModalProps> = ({ title }) => {
-  // const [isLoading, setIsLoading] = React.useState(false);
-  // const handleConfirm = async () => {
-  //   setIsLoading(true);
-  //
-  //   try {
-  //     await onConfirm();
-  //     setIsLoading(false);
-  //   } finally {
-  //     onClose();
-  //   }
-  // };
+export const ConfirmModal: React.FC<IConfirmModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  description,
+}) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const handleConfirm = async () => {
+    setIsLoading(true);
+
+    try {
+      await onConfirm();
+      setIsLoading(false);
+    } finally {
+      onClose();
+    }
+  };
 
   return (
-    <Dialog.Root>
-      <Dialog.Backdrop />
-      <Dialog.Positioner />
-      <Dialog.CloseTrigger />
-
-      <Dialog.Content>
-        <Dialog.Header>
-          <Dialog.Title>{title}</Dialog.Title>
-        </Dialog.Header>
-
-        <Dialog.Header></Dialog.Header>
-        <Dialog.Footer>
-          <Button>Cancel</Button>
-          <Button>Confirm</Button>
-        </Dialog.Footer>
-      </Dialog.Content>
+    <Dialog.Root lazyMount placement="center" open={isOpen}>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header justifyContent="center">
+              <Dialog.Title>{title}</Dialog.Title>
+            </Dialog.Header>
+            {description ? (
+              <Dialog.Body display="flex" justifyContent="center">
+                <Text>{description}</Text>
+              </Dialog.Body>
+            ) : null}
+            <Dialog.Footer>
+              <Button onClick={onClose}>Cancel</Button>
+              <Button variant="outline" loading={isLoading} onClick={handleConfirm}>
+                Confirm
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
     </Dialog.Root>
   );
 };

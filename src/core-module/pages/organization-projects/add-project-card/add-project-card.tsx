@@ -12,9 +12,7 @@ type AddProjectCardProps = {
 export const AddProjectCard: React.FC<AddProjectCardProps> = ({ onClick }) => {
   return (
     <Card.Root
-      flex="1"
-      width="320px"
-      height="275px"
+      height="320x"
       cursor="pointer"
       _hover={{
         backgroundColor: useColorModeValue("gray.200", "gray.400"),

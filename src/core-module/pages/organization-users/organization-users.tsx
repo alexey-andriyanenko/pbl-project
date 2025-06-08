@@ -1,63 +1,91 @@
 import React from "react";
 
 import { Flex, Button } from "@chakra-ui/react";
-
-import { UserModel } from "src/auth-module/models";
-import { CreateOrEditUserDialog } from "src/core-module/components/create-or-edit-user-dialog";
+import { observer } from "mobx-react-lite";
 
 import { OrganizationSidebar } from "../organization/organization-sidebar";
 import { UsersList } from "./users-list";
-0;
-const OrganizationUsers: React.FC = () => {
-  const [isCreateUserDialogOpen, setCreateUserDialogOpen] = React.useState(false);
+import { useModalsStore, useOrganizationStore } from "../../store";
+import { UserModel } from "src/core-module/models/user";
+import { useModalsStore as useSharedModalsStore } from "src/shared-module/store/modals";
 
-  const stubUsers: UserModel[] = [
-    {
-      id: "1",
-      firstName: "John",
-      lastName: "Doe",
-      email: "johndoe@example.com",
-      role: "Admin",
-      status: "Active",
-    },
-    {
-      id: "2",
-      firstName: "Jane",
-      lastName: "Smith",
-      email: "janesmith@example.com",
-      role: "Employee",
-      status: "Inactive",
-    },
+const OrganizationUsers: React.FC = observer(() => {
+  const organizationStore = useOrganizationStore();
+  const modalsStore = useModalsStore();
+  const sharedModalsStore = useSharedModalsStore();
+  const [loading, setLoading] = React.useState(true);
 
-    {
-      id: "3",
-      firstName: "Alice",
-      lastName: "Johnson",
-      email: "alicejohnson@example.com",
-      role: "Employee",
-      status: "Active",
-    },
-  ];
+  React.useEffect(() => {
+    organizationStore
+      .fetchUsersByOrganization()
+      .then(() => setLoading(false))
+      .catch((error) => {
+        console.error("Failed to fetch users:", error);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleCreateUser = () => {
+    modalsStore.open("CreateOrEditUserDialog", {
+      onCreate: (data) =>
+        organizationStore.createUser({
+          username: data.username,
+          email: data.email,
+          fullName: data.fullName,
+          password: data.password,
+          role: "USER",
+          // orgId: organizationStore.currentOrganization!.id,
+        }),
+    });
+  };
+
+  const handleEditUser = (user: UserModel) => {
+    modalsStore.open("CreateOrEditUserDialog", {
+      user,
+      onEdit: (data) =>
+        organizationStore.updateUser({
+          id: user.id,
+          username: data.username,
+          email: data.email,
+          fullName: data.fullName,
+          role: user.role,
+        }),
+    });
+  };
+
+  const handleDeleteUser = (user: UserModel) => {
+    sharedModalsStore.open("ConfirmModal", {
+      title: "Are you sure you want to delete this user?",
+      description: `This action cannot be undone. User: ${user.fullName}`,
+      onConfirm: () => organizationStore.deleteUser(user.id),
+    });
+  };
 
   return (
-    <Flex direction="row" width="100%" height="100vh">
+    <Flex flex="1" direction="row" width="100%">
       <OrganizationSidebar />
 
       <Flex direction="column" width="100%" p={4}>
-        <Flex justify="flex-end">
-          <Button variant="outline" onClick={() => setCreateUserDialogOpen(true)}>
-            Create User
-          </Button>
-        </Flex>
-        <UsersList users={stubUsers} />
-      </Flex>
+        {loading ? (
+          <div>loading users...</div>
+        ) : (
+          <>
+            <Flex justify="flex-end">
+              <Button variant="outline" onClick={handleCreateUser}>
+                Create User
+              </Button>
+            </Flex>
 
-      <CreateOrEditUserDialog
-        isOpen={isCreateUserDialogOpen}
-        onClose={() => setCreateUserDialogOpen(false)}
-      />
+            <UsersList
+              users={organizationStore.users}
+              onEdit={handleEditUser}
+              onDelete={handleDeleteUser}
+            />
+          </>
+        )}
+      </Flex>
     </Flex>
   );
-};
+});
 
 export default OrganizationUsers;

@@ -1,19 +1,23 @@
-export interface ILoginRequest {
-  email: string;
+import { UserModel } from "../models";
+
+export interface ISignInRequest {
+  username: string;
   password: string;
 }
 
-export interface ISignupRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  organizationName: string;
-  projectName: string;
+export interface ISignInResponse {
+  id: number;
+  token: string;
+  role: "USER" | "ADMIN";
 }
 
-export interface IUser {
-  firstName: string;
-  lastName: string;
+export type SignUpRequest = {
+  fullName: string;
+  username: string;
   email: string;
-}
+  password: string;
+  orgId: number;
+  role: "USER" | "ADMIN";
+};
+
+export type SignUpResponse = UserModel;

@@ -6,14 +6,14 @@ import {
   ModalsProviderRegistryGuard,
   ModalsStoreRegistryGuard,
 } from "src/modals-module/modals.types";
-import { IModalProps } from "src/modals-module";
+import { ModalProps } from "src/modals-module";
 
 export interface IModalsProviderProps<ModalName extends string> {
   store: ModalsStore<ModalName, ModalsStoreRegistryGuard<ModalName>>;
   providerRegistry: ModalsProviderRegistryGuard<ModalName>;
 }
 
-export const ModalsProvider = observer(
+export const ModalsProvider: React.FC = observer(
   <ModalName extends string>({ store, providerRegistry }: IModalsProviderProps<ModalName>) => {
     return (
       <>
@@ -23,7 +23,7 @@ export const ModalsProvider = observer(
           return (
             <ModalComponent
               key={name}
-              {...(props as IModalProps)}
+              {...(props as ModalProps)}
               isOpen
               onClose={() => store.close(name as ModalName)}
             />

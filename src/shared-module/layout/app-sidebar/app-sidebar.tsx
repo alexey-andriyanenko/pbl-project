@@ -5,11 +5,11 @@ import { Link } from "react-router-dom";
 import { useColorModeValue } from "src/components/ui/color-mode.tsx";
 import { AppSidebarProps, AppSidebarNavItemProps } from "./app-sidebar.types.ts";
 
-export const AppSidebar: React.FC<AppSidebarProps> = ({ navItems }) => {
+export const AppSidebar: React.FC<AppSidebarProps> = ({ title, navItems }) => {
   return (
     <Box width="320px" minWidth="320px" padding="40px 10px 40px 40px" borderRightWidth="1px">
       <Stack>
-        <Heading> {"{Organization Name}"} </Heading>
+        <Heading> {title} </Heading>
 
         <Stack gap="4">
           {navItems.map((item, i) => (

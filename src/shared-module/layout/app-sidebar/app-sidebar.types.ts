@@ -1,4 +1,5 @@
 export type AppSidebarProps = {
+  title: string;
   navItems: AppSidebarNavItemProps[];
 };
 
