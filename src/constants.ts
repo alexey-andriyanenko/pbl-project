@@ -1,2 +1,2 @@
-export const authApiUrl = "http://localhost:8080";
-export const apiUrl = "http://localhost:8089";
+export const authApiUrl = import.meta.env.VITE_AUTH_API_URL;
+export const apiUrl = import.meta.env.VITE_CORE_API_URL;
