@@ -9,11 +9,11 @@ export const authHttpClient = new HttpClient({ baseUrl: authApiUrl, anonymous: t
 export const httpClient = new HttpClient({
   baseUrl: apiUrl,
   interceptors: [
-    (request: XMLHttpRequest) => {
-      if (request.status === 401 || request.status === 403) {
-        localStorage.removeItem("token");
-        window.location.href = "/sign-in";
-      }
-    },
+    // (request: XMLHttpRequest) => {
+    //   if (request.status === 401 || request.status === 403) {
+    //     localStorage.removeItem("token");
+    //     window.location.href = "/sign-in";
+    //   }
+    // },
   ],
 });

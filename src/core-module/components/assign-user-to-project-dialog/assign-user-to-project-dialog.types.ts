@@ -1,3 +1,3 @@
 export type AssignUserFormValues = {
-  userId: string;
+  userId: string[];
 };

@@ -34,7 +34,7 @@ const OrganizationUsers: React.FC = observer(() => {
           fullName: data.fullName,
           password: data.password,
           role: "USER",
-          // orgId: organizationStore.currentOrganization!.id,
+          orgId: organizationStore.currentOrganization!.id,
         }),
     });
   };

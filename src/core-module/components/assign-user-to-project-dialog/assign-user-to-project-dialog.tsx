@@ -31,7 +31,7 @@ export const AssignUserToProjectDialog: React.FC<AssignUserToProjectDialogProps>
   );
   const { formState, setError, control, handleSubmit } = useForm<AssignUserFormValues>({
     defaultValues: {
-      userId: "",
+      userId: [],
     },
   });
 
@@ -44,7 +44,7 @@ export const AssignUserToProjectDialog: React.FC<AssignUserToProjectDialogProps>
       return;
     }
 
-    await onAssign(+data.userId);
+    await onAssign(+data.userId[0]);
     onClose();
   });
 
@@ -68,7 +68,7 @@ export const AssignUserToProjectDialog: React.FC<AssignUserToProjectDialogProps>
                       <Select.Root
                         name={field.name}
                         value={field.value}
-                        onValueChange={(item) => field.onChange(item.value[0])}
+                        onValueChange={(item) => field.onChange(item.value)}
                         onInteractOutside={() => field.onBlur()}
                         collection={collection}
                       >

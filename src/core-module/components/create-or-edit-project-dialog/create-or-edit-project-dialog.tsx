@@ -28,7 +28,7 @@ export const CreateOrEditProjectDialog: React.FC<CreateOrEditProjectDialogProps>
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    if (project === null) {
+    if (!project) {
       await onCreate?.(data.name, data.description);
     } else {
       await onEdit?.(data.name, data.description);
